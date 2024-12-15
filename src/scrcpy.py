@@ -3,7 +3,7 @@ import mss
 import numpy as np
 import atexit
 import threading
-import pygetwindow as gw
+import pywinctl as pwc
 
 from .config import Config
 
@@ -16,7 +16,7 @@ class ScreenCopy:
     ready: bool = False
     arch_name: str = Config.get('arch_name')
     process : None | Popen = None
-    window : None | gw.BaseWindow = None
+    window = None
     origin_window_size : None | tuple[int, int]= None
     
     _latest_img = None
@@ -91,10 +91,10 @@ class ScreenCopy:
     @staticmethod
     def init() -> Any:
         ScreenCopy.process = Popen([ScreenCopy.get_executable_file_path(), '-b200M', '-m640', '--window-title=ScreenCopy', '--always-on-top', '--window-borderless', '--no-audio', '--no-control'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        while not gw.getWindowsWithTitle('ScreenCopy'):
+        while not pwc.getWindowsWithTitle('ScreenCopy'):
             sleep(0.1)
         sleep(0.1)
-        ScreenCopy.window = gw.getWindowsWithTitle('ScreenCopy')[0]
+        ScreenCopy.window = pwc.getWindowsWithTitle('ScreenCopy')[0]
         ScreenCopy.origin_window_size = ScreenCopy.window.size
         atexit.register(ScreenCopy.at_exit)
         threading.Thread(target=ScreenCopy.window_protect, daemon=True).start()
