@@ -26,12 +26,12 @@ def train_main():
     actor_net = ActorDistributionNetwork(
         input_tensor_spec=train_env.observation_spec(),
         output_tensor_spec=train_env.action_spec(),
-        fc_layer_params=(2048, 1024, 512)  # Hidden layers
+        fc_layer_params=(16384, 8192, 4096, 4096)  # Hidden layers
     )
 
     value_net = ValueNetwork(
         input_tensor_spec=train_env.observation_spec(),
-        fc_layer_params=(2048, 1024, 512)
+        fc_layer_params=(16384, 8192, 4096, 4096)
     )
 
     optimizer = keras.optimizers.Adam(learning_rate=1e-4)

@@ -51,7 +51,7 @@ class GameEnvironment(py_environment.PyEnvironment):
         if GameController.is_end():
             self._episode_ended = True
             crown_number = GameController.count_crown()
-            reward = crown_number[0] * 100 - crown_number[1] * 100  # 戰鬥結束並勝利，給予回報
+            reward = crown_number[0] * 2000 - crown_number[1] * 2000  # 戰鬥結束並勝利，給予回報
             return ts.termination(self._state, reward)
 
         # 中間回報基於戰鬥情況（可自定）
