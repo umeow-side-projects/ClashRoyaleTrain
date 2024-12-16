@@ -1,4 +1,7 @@
+import os
+import keras
 import tensorflow as tf
+
 from tf_agents.agents.ppo import ppo_agent
 from tf_agents.networks.actor_distribution_network import ActorDistributionNetwork
 from tf_agents.networks.value_network import ValueNetwork
@@ -9,10 +12,12 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.drivers.dynamic_step_driver import DynamicStepDriver
 from tf_agents.metrics import tf_metrics
 from tf_agents.utils import common
+from time import time
 
 from .game_envriment import GameEnvironment
 
 def train_main():
+    train_time = time()
     # === Step 1: Setup Environment === #
     # env_name = "CartPole-v1"
     train_env = tf_py_environment.TFPyEnvironment(GameEnvironment)
@@ -29,7 +34,7 @@ def train_main():
         fc_layer_params=(2048, 1024, 512)
     )
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
+    optimizer = keras.optimizers.Adam(learning_rate=1e-4)
 
     global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -74,9 +79,9 @@ def train_main():
     # === Step 6: Training Loop === #
     num_iterations = 5000
     log_interval = 100
-    checkpoint_dir = "ppo_checkpoints/"
+    checkpoint_dir = os.path.join('ppo_checkpoints', f'{train_time}')
     checkpoint = tf.train.Checkpoint(agent=agent, optimizer=optimizer)
-    checkpoint_manager = tf.train.CheckpointManager(checkpoint, checkpoint_dir, max_to_keep=3)
+    checkpoint_manager = tf.train.CheckpointManager(checkpoint, checkpoint_dir, max_to_keep=10)
 
     for iteration in range(num_iterations):
         # Collect Data
@@ -97,7 +102,10 @@ def train_main():
             avg_return = train_metrics[0].result().numpy()
             avg_length = train_metrics[1].result().numpy()
             print(f"Iteration: {iteration}, Avg Return: {avg_return:.2f}, Avg Length: {avg_length:.2f}, Loss: {loss_info.loss.numpy():.2f}")
-            checkpoint_manager.save()
+            try:
+                checkpoint_manager.save(global_step)
+            except:
+                pass
 
     print("Training complete.")
 
