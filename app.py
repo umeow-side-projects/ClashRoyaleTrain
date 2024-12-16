@@ -60,6 +60,9 @@ def custom_path() -> None:
         if command == 'set-combatmenu':
             cv2.imwrite('combat_menu_screen.png', ScreenCopy.get_image()[325:335, 70:80, 0:3])
             continue
+        if command == 'set-end':
+            cv2.imwrite('end_screen.png', ScreenCopy.get_image()[358:378, 157:177, 0:3])
+            continue
         GameController.add_command(command)
 
 def main() -> None:
