@@ -17,7 +17,7 @@ from time import time
 from .game_envriment import GameEnvironment
 
 def train_main():
-    train_time = time()
+    train_time = int(time())
     # === Step 1: Setup Environment === #
     # env_name = "CartPole-v1"
     train_env = tf_py_environment.TFPyEnvironment(GameEnvironment)
@@ -80,10 +80,9 @@ def train_main():
 
     # === Step 6: Training Loop === #
     num_iterations = 5000
-    log_interval = 100
-    checkpoint_dir = os.path.join('ppo_checkpoints', f'{train_time}')
+    log_interval = 1
     checkpoint = tf.train.Checkpoint(agent=agent, optimizer=optimizer)
-    checkpoint_manager = tf.train.CheckpointManager(checkpoint, checkpoint_dir, max_to_keep=10)
+    checkpoint_manager = tf.train.CheckpointManager(checkpoint, f'ppo_checkpoints{train_time}', max_to_keep=10)
 
     for iteration in range(num_iterations):
         # Collect Data
@@ -104,10 +103,7 @@ def train_main():
             avg_return = train_metrics[0].result().numpy()
             avg_length = train_metrics[1].result().numpy()
             print(f"Iteration: {iteration}, Avg Return: {avg_return:.2f}, Avg Length: {avg_length:.2f}, Loss: {loss_info.loss.numpy():.2f}")
-            try:
-                checkpoint_manager.save(global_step)
-            except:
-                pass
+            checkpoint_manager.save(global_step)
 
     print("Training complete.")
 

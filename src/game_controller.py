@@ -94,7 +94,7 @@ class GameController:
         
         diff = np.abs(end_screen - target)
         
-        result = np.all(diff < 10)
+        result = np.all(diff < 20)
         
         return result
 
