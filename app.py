@@ -51,6 +51,15 @@ def custom_path() -> None:
         if command == 'screenshot':
             cv2.imwrite('screenshot.png', ScreenCopy.get_image())
             continue
+        if command == 'set-homepage':
+            cv2.imwrite('home_screen.png', ScreenCopy.get_image()[602:617, 226:238, 0:3])
+            continue
+        if command == 'set-combatpage':
+            cv2.imwrite('combat_screen.png', ScreenCopy.get_image()[601:615, 243:255, 0:3])
+            continue
+        if command == 'set-combatmenu':
+            cv2.imwrite('combat_menu_screen.png', ScreenCopy.get_image()[325:335, 70:80, 0:3])
+            continue
         GameController.add_command(command)
 
 def main() -> None:
@@ -121,8 +130,8 @@ def main() -> None:
     #     sleep(0.1)
     # cv2.imwrite('test.png', ScreenCopy.get_image())
     
-    # custom_path()
-    # click_test()
+    custom_path()
+    click_test()
     
     Thread(target=auto_game, daemon=True).start()
     train_main()

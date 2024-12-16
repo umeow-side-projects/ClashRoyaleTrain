@@ -48,7 +48,7 @@ class ScreenCopy:
     @staticmethod
     def window_protect() -> None:
         while True:
-            if not gw.getWindowsWithTitle('ScreenCopy'):
+            if not pwc.getWindowsWithTitle('ScreenCopy'):
                 os._exit(1)
                 
             if ScreenCopy.window.isMinimized:
