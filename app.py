@@ -130,8 +130,8 @@ def main() -> None:
     #     sleep(0.1)
     # cv2.imwrite('test.png', ScreenCopy.get_image())
     
-    custom_path()
-    click_test()
+    # custom_path()
+    # click_test()
     
     Thread(target=auto_game, daemon=True).start()
     train_main()
