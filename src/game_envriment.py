@@ -1,4 +1,5 @@
 import cv2
+import logging
 import numpy as np
 
 from time import time, sleep
@@ -22,6 +23,9 @@ class GameEnvironment(py_environment.PyEnvironment):
         )
         self._state = np.zeros((160, 80), dtype=np.float32)  # 初始化狀態為空畫面
         self._episode_ended = False
+        
+        self._last_game_start_time = 0
+        self._game_start = False
 
     def action_spec(self):
         return self._action_spec
@@ -31,28 +35,36 @@ class GameEnvironment(py_environment.PyEnvironment):
 
     def _reset(self):
         """重置環境."""
-        while not GameController.is_in_game():
-            sleep(0.5)
+        self._episode_ended = False
         
-        self._episode_ended = not GameController.is_in_game()
+        if not self._episode_ended:
+            self._last_game_start_time = time()
+        
         self._state = preprocess_image(ScreenCopy.get_image())
         return ts.restart(self._state)
 
     def _step(self, action):
         """執行單步動作."""
-        
         if self._episode_ended:
             return self.reset()
+
+        # logging.info('step...')
+        while not self._game_start and not GameController.is_in_game():
+            # logging.info('in step and game not start')
+            sleep(0.5)
+        self._game_start = True
 
         # 更新環境狀態
         self._state = preprocess_image(ScreenCopy.get_image())
 
         # 計算回報和是否結束回合
         if GameController.is_end():
+            game_time = time() - self._last_game_start_time
             self._episode_ended = True
+            self._game_start = False
             crown_number = GameController.count_crown()
             reward = crown_number[0] * 2000 - crown_number[1] * 2000  # 戰鬥結束並勝利，給予回報
-            return ts.termination(self._state, reward)
+            return ts.termination(self._state, time_reward(reward, game_time))
 
         # 中間回報基於戰鬥情況（可自定）
         reward = evaluate_battle_reward(action)
@@ -66,6 +78,17 @@ def preprocess_image(image):
     gray_image = cv2.cvtColor(small_img, cv2.COLOR_BGRA2GRAY).astype(np.float32)
     
     return gray_image / 255.0
+
+def time_reward(reward, game_time):
+    if game_time < 60:
+        return reward * 2
+    if game_time < 120:
+        return reward * 1.5
+    if game_time < 150:
+        return reward * 1.2
+    if game_time < 160:
+        return reward * 1.1
+    return reward
 
 event_reward = {}
 
@@ -92,5 +115,5 @@ def evaluate_battle_reward(action):
     
     del event_reward[event_time]
     
-    sleep(0.5)
+    # print(reward)
     return reward

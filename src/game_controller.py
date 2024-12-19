@@ -28,13 +28,16 @@ end_screen = cv2.imread('end_screen.png').astype(np.int16)
 home_screen = cv2.imread('home_screen.png').astype(np.int16)
 combat_screen = cv2.imread('combat_screen.png').astype(np.int16)
 combat_menu_screen = cv2.imread('combat_menu_screen.png').astype(np.int16)
+full_elixir_screen = cv2.imread('full_elixir.png').astype(np.int16)
 
 class GameController:
+    is_training = False
     command_queue = []
     
     @staticmethod
     def add_command(command: int, event_reward: dict, event_time: int) -> None:
         GameController.command_queue.insert(0, (command, event_reward, event_time))
+        
     
     @staticmethod
     def can_place(x, y) -> bool:
@@ -88,6 +91,17 @@ class GameController:
         return True
     
     @staticmethod
+    def is_full_elixir() -> bool:
+        img = ScreenCopy.get_image()
+        target = img[612:615, 95:125, 0:3]
+        
+        diff = np.abs(full_elixir_screen - target)
+        
+        result = np.all(diff < 20)
+        
+        return result
+    
+    @staticmethod
     def is_end() -> bool:
         img = ScreenCopy.get_image()
         target = img[358:378, 157:177, 0:3]
@@ -116,18 +130,19 @@ class GameController:
         
         diff = np.abs(combat_screen - target)
         
-        result = np.all(diff < 10)
+        result = np.all(diff < 20)
         
         return result
     
     @staticmethod
     def is_in_combat_menu_page() -> bool:
         img = ScreenCopy.get_image()
-        target = img[325:335, 70:80, 0:3]
+        target = img[433:453, 117:137, 0:3]
         
         diff = np.abs(combat_menu_screen - target)
+        # print(diff)
         
-        result = np.all(diff < 10)
+        result = np.all(diff < 20)
         
         return result
     
@@ -202,15 +217,19 @@ class GameController:
     @staticmethod
     def controller_thread() -> None:
         while True:
+            # print(len(GameController.command_queue))
             if not GameController.command_queue:
-                sleep(0.02)
+                sleep(0.01)
             try:
                 command, event_reward, event_time = GameController.command_queue.pop()
                 if not GameController.is_in_game():
                     event_reward[event_time] = 0
                     continue
                 if command == 0:
-                    event_reward[event_time] = 0.02
+                    if GameController.is_full_elixir():
+                        event_reward[event_time] = -1
+                    else:
+                        event_reward[event_time] = 0.01
                     continue
                 from_x, from_y, to_x, to_y = GameController.command_parser(command)
                 origin_img = ScreenCopy.get_image()

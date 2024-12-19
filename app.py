@@ -45,6 +45,9 @@ def click_test() -> None:
             AndroidViewClient.drag(from_x, from_y, to_x, to_y, 1)
 
 def custom_path() -> None:
+    # while True:
+    #     print(GameController.is_full_elixir())
+    #     sleep(0.5)
     while True:
         command = eval(input('input command: '))
         
@@ -58,7 +61,7 @@ def custom_path() -> None:
             cv2.imwrite('combat_screen.png', ScreenCopy.get_image()[601:615, 243:255, 0:3])
             continue
         if command == 'set-combatmenu':
-            cv2.imwrite('combat_menu_screen.png', ScreenCopy.get_image()[325:335, 70:80, 0:3])
+            cv2.imwrite('combat_menu_screen.png', ScreenCopy.get_image()[433:453, 117:137, 0:3])
             continue
         if command == 'set-end':
             cv2.imwrite('end_screen.png', ScreenCopy.get_image()[358:378, 157:177, 0:3])
