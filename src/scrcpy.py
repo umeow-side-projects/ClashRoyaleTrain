@@ -106,5 +106,4 @@ class ScreenCopy:
     @staticmethod
     def get_image() -> NDArray[Shape["640, Any, 4"], np.uint8]:
         img = np.array(ScreenCopy._latest_img, dtype=np.uint8)
-        img[:, :, 3] = 255
-        return img
+        return img[:, :, :3]

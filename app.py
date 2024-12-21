@@ -66,7 +66,7 @@ def custom_path() -> None:
         if command == 'set-end':
             cv2.imwrite('end_screen.png', ScreenCopy.get_image()[358:378, 157:177, 0:3])
             continue
-        GameController.add_command(command)
+        GameController.add_command(command, {}, 0)
 
 def main() -> None:
     execute_path = os.path.abspath('.')
@@ -136,6 +136,12 @@ def main() -> None:
     #     sleep(0.1)
     # cv2.imwrite('test.png', ScreenCopy.get_image())
     
+    # from src.toolbox import ToolBox
+    # while True:
+    #     screen = ScreenCopy.get_image()
+    #     print(ToolBox.get_elixir_cost(screen, 0), ToolBox.get_elixir_cost(screen, 1), ToolBox.get_elixir_cost(screen, 2), ToolBox.get_elixir_cost(screen, 3))
+    #     sleep(1)
+        
     # custom_path()
     # click_test()
     

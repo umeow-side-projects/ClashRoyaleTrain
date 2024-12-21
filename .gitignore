@@ -170,3 +170,4 @@ cython_debug/
 .vscode/
 ppo_checkpoints*
 policy_dir
+cache

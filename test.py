@@ -2,13 +2,20 @@ import cv2
 
 img = cv2.imread('screenshot.png')
 
-full_eixir = img[433:453, 117:137]
+# right down
+cv2.imwrite('test1.png', img[397:398, 263:297])
 
-cv2.imwrite('combat_menu_screen.png', full_eixir)
+# left down
+cv2.imwrite('test2.png', img[397:398, 75:109])
 
-# small_img = cv2.resize(img, (80, 160), interpolation=cv2.INTER_AREA)
+# left up
+cv2.imwrite('test3.png', img[98:99, 263:297])
 
-# gray_img = cv2.cvtColor(small_img, cv2.COLOR_BGR2GRAY)
+# right up
+cv2.imwrite('test4.png', img[98:99, 75:109])
 
-# cv2.imshow('test', gray_img)
-# cv2.waitKey()
+# down
+cv2.imwrite('test5.png', img[483:484, 162:213])
+
+# up
+cv2.imwrite('test6.png', img[25:26, 160:211])
