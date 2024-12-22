@@ -179,6 +179,7 @@ class ToolBox:
     
     @staticmethod
     def check_no_life_color(color, mode: int) -> bool:
+        color = color.astype(np.int16)
         if mode == 0:
             if abs(color[0] - 117) > 20:
                 return False

@@ -98,6 +98,9 @@ class GameEnvironment(py_environment.PyEnvironment):
         # reward = ...
         # reward = 0.1  # 測試階段可用固定值代替
         
+        if not ToolBox.is_in_game(self._screen):
+            return 5 if action == 0 else -5
+        
         desk_index = (action - 1) // 552
         desk_bool = ToolBox.can_place_desk(self._screen)
         
@@ -118,7 +121,7 @@ class GameEnvironment(py_environment.PyEnvironment):
         # right down
         right_down = self._screen[397, 263:297]
         right_down_life = 0
-        for i in range(right_down.shape[1])[::-1]:
+        for i in range(right_down.shape[0])[::-1]:
             if ToolBox.check_no_life_color(right_down[i], 0):
                 right_down_life += 1
             else:
@@ -127,25 +130,25 @@ class GameEnvironment(py_environment.PyEnvironment):
         # left down
         left_down = self._screen[397, 75:109]
         left_down_life = 0
-        for i in range(left_down.shape[1])[::-1]:
+        for i in range(left_down.shape[0])[::-1]:
             if ToolBox.check_no_life_color(left_down[i], 0):
                 left_down_life += 1
             else:
                 break
         
         # left up
-        left_up = self._screen[98, 263:297]
+        left_up = self._screen[98, 75:109]
         left_up_life = 0
-        for i in range(left_up.shape[1])[::-1]:
+        for i in range(left_up.shape[0])[::-1]:
             if ToolBox.check_no_life_color(left_up[i], 1):
                 left_up_life += 1
             else:
                 break
         
         # right up
-        right_up = self._screen[98, 75:109]
+        right_up = self._screen[98, 263:297]
         right_up_life = 0
-        for i in range(right_up.shape[1])[::-1]:
+        for i in range(right_up.shape[0])[::-1]:
             if ToolBox.check_no_life_color(right_up[i], 1):
                 right_up_life += 1
             else:
@@ -154,7 +157,7 @@ class GameEnvironment(py_environment.PyEnvironment):
         # down
         down = self._screen[483, 162:213]
         down_life = 0
-        for i in range(down.shape[1])[::-1]:
+        for i in range(down.shape[0])[::-1]:
             if ToolBox.check_no_life_color(down[i], 2):
                 down_life += 1
             else:
@@ -163,18 +166,18 @@ class GameEnvironment(py_environment.PyEnvironment):
         # up
         up = self._screen[25, 160:211]
         up_life = 0
-        for i in range(up.shape[1])[::-1]:
+        for i in range(up.shape[0])[::-1]:
             if ToolBox.check_no_life_color(up[i], 3):
                 up_life += 1
             else:
                 break
         
         if left_down_life > self._left_down_life:
-            reward -= (left_down_life - self._left_down_life) * 50
+            reward -= (left_down_life - self._left_down_life) * 55
             self._left_down_life = left_down_life
         
         if right_down_life > self._right_down_life:
-            reward -= (right_down_life - self._right_down_life) * 50
+            reward -= (right_down_life - self._right_down_life) * 55
             self._right_down_life = right_down_life
         
         if left_up_life > self._left_up_life:
@@ -183,10 +186,10 @@ class GameEnvironment(py_environment.PyEnvironment):
         
         if right_up_life > self._right_up_life:
             reward += (right_up_life - self._right_up_life) * 50
-            self._right_up_life = right_up
+            self._right_up_life = right_up_life
         
         if down_life > self._down_life:
-            reward -= (down_life - self._down_life) * 50
+            reward -= (down_life - self._down_life) * 55
             self._down_life = down_life
         
         if up_life > self._up_life:
